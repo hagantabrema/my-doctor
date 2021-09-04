@@ -1,0 +1,23 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "job": "dokter umum"
+        },
+
+        {
+            "id": 2,
+            "job": "psikiater"
+        },
+
+        {
+            "id": 3,
+            "job": "dokter obat"
+        },
+
+        {
+            "id": 4,
+            "job": "dokter anak"
+        }
+    ]
+}
