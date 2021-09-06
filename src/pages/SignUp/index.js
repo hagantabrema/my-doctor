@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Button, Gap, Header, Input} from '../../components/';
 import {colors, useForm} from '../../utils/';
+import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 
 const SignUp = ({navigation}) => {
   const [fullName, setFullName] = useState('');
@@ -18,6 +19,23 @@ const SignUp = ({navigation}) => {
 
   const onContinue = () => {
     console.log(form);
+
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, form.email, form.password)
+      // .then(userCredential => {
+      //   // Signed in
+      //   const user = userCredential.user;
+      //   // ...
+      // })
+      .then(success => {
+        console.log('register success : ', success);
+      })
+      .catch(error => {
+        // const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log('register failed : ', errorMessage);
+        // ..
+      });
     //navigation.navigate('UploadPhoto')
   };
 
