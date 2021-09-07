@@ -3,6 +3,7 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import {Button, Gap, Header, Input, Loading} from '../../components/';
 import {colors, useForm} from '../../utils/';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 const SignUp = ({navigation}) => {
   const [form, setForm] = useForm({
@@ -18,7 +19,6 @@ const SignUp = ({navigation}) => {
     console.log(form);
 
     setLoading(true);
-
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, form.email, form.password)
       // .then(userCredential => {
@@ -35,8 +35,13 @@ const SignUp = ({navigation}) => {
         // const errorCode = error.code;
         setLoading(false);
         const errorMessage = error.message;
+        showMessage({
+          message: errorMessage,
+          type: 'default',
+          backgroundColor: colors.error,
+          color: colors.white,
+        });
         console.log('register failed : ', errorMessage);
-        // ..
       });
     //navigation.navigate('UploadPhoto')
   };
