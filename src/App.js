@@ -12,6 +12,7 @@ const firebaseConfig = {
   storageBucket: 'my-doctor-8c068.appspot.com',
   messagingSenderId: '657077493514',
   appId: '1:657077493514:web:ae650f0a460c40aabc64f3',
+  databaseURL: 'https://my-doctor-8c068-default-rtdb.asia-southeast1.firebasedatabase.app/'
 };
 
 const app = initializeApp(firebaseConfig);

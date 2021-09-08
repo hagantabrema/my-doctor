@@ -4,6 +4,7 @@ import {Button, Gap, Header, Input, Loading} from '../../components/';
 import {colors, useForm} from '../../utils/';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 import {showMessage, hideMessage} from 'react-native-flash-message';
+import {getDatabase, ref, set} from 'firebase/database';
 
 const SignUp = ({navigation}) => {
   const [form, setForm] = useForm({
@@ -21,19 +22,34 @@ const SignUp = ({navigation}) => {
     setLoading(true);
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, form.email, form.password)
-      // .then(userCredential => {
-      //   // Signed in
-      //   const user = userCredential.user;
-      //   // ...
-      // })
       .then(success => {
         setLoading(false);
         setForm('reset');
+
+        // const data = {
+        //   fullName: form.fullName,
+        //   job: form.job,
+        //   email: form.email,
+        // };
+
+        const db = getDatabase();
+        set(ref(db, 'users/' + success.user.uid), {
+          fullName: form.fullName,
+          job: form.job,
+          email: form.email,
+        });
+
+        // firebase
+        //   .update()
+        //   .ref('users/' + success.user.uid + '/')
+        //   .set(data);
+
         console.log('register success : ', success);
       })
+      
       .catch(error => {
-        // const errorCode = error.code;
         setLoading(false);
+        const errorCode = error.code;
         const errorMessage = error.message;
         showMessage({
           message: errorMessage,
@@ -41,7 +57,14 @@ const SignUp = ({navigation}) => {
           backgroundColor: colors.error,
           color: colors.white,
         });
-        console.log('register failed : ', errorMessage);
+        console.log(
+          'register failed, ',
+          'error code : ',
+          errorCode,
+          ', ',
+          'error message : ',
+          errorMessage,
+        );
       });
     //navigation.navigate('UploadPhoto')
   };
