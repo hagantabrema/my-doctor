@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Button, Gap, Header, Input, Loading} from '../../components/';
-import {colors, useForm} from '../../utils/';
+import {colors, useForm, storeData, getData} from '../../utils/';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 import {showMessage, hideMessage} from 'react-native-flash-message';
+import {getDatabase, ref, set} from 'firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUp = ({navigation}) => {
   const [form, setForm] = useForm({
@@ -21,19 +23,34 @@ const SignUp = ({navigation}) => {
     setLoading(true);
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, form.email, form.password)
-      // .then(userCredential => {
-      //   // Signed in
-      //   const user = userCredential.user;
-      //   // ...
-      // })
       .then(success => {
         setLoading(false);
         setForm('reset');
+
+        const data = {
+          fullName: form.fullName,
+          job: form.job,
+          email: form.email,
+        };
+
+        const db = getDatabase();
+        set(ref(db, 'users/' + success.user.uid), {data});
+        storeData('user', data);
+
+        showMessage({
+          message: 'Registrasi berhasil',
+          type: 'default',
+          backgroundColor: colors.primary,
+          color: colors.white,
+        });
+
+        navigation.navigate('UploadPhoto');
         console.log('register success : ', success);
       })
+
       .catch(error => {
-        // const errorCode = error.code;
         setLoading(false);
+        const errorCode = error.code;
         const errorMessage = error.message;
         showMessage({
           message: errorMessage,
@@ -41,9 +58,15 @@ const SignUp = ({navigation}) => {
           backgroundColor: colors.error,
           color: colors.white,
         });
-        console.log('register failed : ', errorMessage);
+        console.log(
+          'register failed, ',
+          'error code : ',
+          errorCode,
+          ', ',
+          'error message : ',
+          errorMessage,
+        );
       });
-    //navigation.navigate('UploadPhoto')
   };
 
   return (
