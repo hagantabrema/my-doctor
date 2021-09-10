@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Button, Gap, Header, Input, Loading} from '../../components/';
-import {colors, useForm} from '../../utils/';
+import {colors, useForm, storeData, getData} from '../../utils/';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 import {showMessage, hideMessage} from 'react-native-flash-message';
 import {getDatabase, ref, set} from 'firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUp = ({navigation}) => {
   const [form, setForm] = useForm({
@@ -26,27 +27,27 @@ const SignUp = ({navigation}) => {
         setLoading(false);
         setForm('reset');
 
-        // const data = {
-        //   fullName: form.fullName,
-        //   job: form.job,
-        //   email: form.email,
-        // };
-
-        const db = getDatabase();
-        set(ref(db, 'users/' + success.user.uid), {
+        const data = {
           fullName: form.fullName,
           job: form.job,
           email: form.email,
+        };
+
+        const db = getDatabase();
+        set(ref(db, 'users/' + success.user.uid), {data});
+        storeData('user', data);
+
+        showMessage({
+          message: 'Registrasi berhasil',
+          type: 'default',
+          backgroundColor: colors.primary,
+          color: colors.white,
         });
 
-        // firebase
-        //   .update()
-        //   .ref('users/' + success.user.uid + '/')
-        //   .set(data);
-
+        navigation.navigate('UploadPhoto');
         console.log('register success : ', success);
       })
-      
+
       .catch(error => {
         setLoading(false);
         const errorCode = error.code;
@@ -66,7 +67,6 @@ const SignUp = ({navigation}) => {
           errorMessage,
         );
       });
-    //navigation.navigate('UploadPhoto')
   };
 
   return (
