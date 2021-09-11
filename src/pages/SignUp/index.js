@@ -5,7 +5,6 @@ import {colors, useForm, storeData, getData} from '../../utils/';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 import {showMessage, hideMessage} from 'react-native-flash-message';
 import {getDatabase, ref, set} from 'firebase/database';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUp = ({navigation}) => {
   const [form, setForm] = useForm({
@@ -34,7 +33,7 @@ const SignUp = ({navigation}) => {
         };
 
         const db = getDatabase();
-        set(ref(db, 'users/' + success.user.uid), {data});
+        set(ref(db, 'users/' + success.user.uid), data);
         storeData('user', data);
 
         showMessage({
@@ -44,7 +43,7 @@ const SignUp = ({navigation}) => {
           color: colors.white,
         });
 
-        navigation.navigate('UploadPhoto');
+        navigation.navigate('UploadPhoto', data);
         console.log('register success : ', success);
       })
 
