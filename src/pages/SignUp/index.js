@@ -44,7 +44,7 @@ const SignUp = ({navigation}) => {
           color: colors.white,
         });
 
-        navigation.navigate('UploadPhoto');
+        navigation.navigate('UploadPhoto', data);
         console.log('register success : ', success);
       })
 
