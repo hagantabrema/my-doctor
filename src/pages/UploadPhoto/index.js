@@ -8,15 +8,17 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {showMessage} from 'react-native-flash-message';
+import {getDatabase, ref, set, update} from 'firebase/database';
 
 const UploadPhoto = ({navigation, route}) => {
-  const {fullName, job} = route.params;
+  const {fullName, job, uid} = route.params;
+  const [photoForDatabase, setPhotoForDatabase] = useState('');
 
   const [hasPhoto, setHasPhoto] = useState(false);
   const [photo, setPhoto] = useState(ILNullPhoto);
 
   const getImage = () => {
-    launchImageLibrary({}, callback => {
+    launchImageLibrary({quality: 0.5, maxWidth: 200, maxHeight: 200}, callback => {
       console.log('response: ', callback);
 
       if (callback.didCancel || callback.errorMessage) {
@@ -28,10 +30,27 @@ const UploadPhoto = ({navigation, route}) => {
         });
       } else {
         const source = {uri: callback.assets};
+
+        setPhotoForDatabase(
+          `data: ${callback.assets[0].type};base64, ${callback.assets[0].fileName}`,
+        );
+
         setPhoto(source.uri);
         setHasPhoto(true);
       }
     });
+  };
+
+  const uploadAndContinue = () => {
+    
+    const photo = {
+      photo: photoForDatabase,
+    };
+    
+    const db = getDatabase();
+    update(ref(db, 'users/' + uid), photo);
+
+    navigation.replace('MainApp');
   };
 
   return (
@@ -58,7 +77,7 @@ const UploadPhoto = ({navigation, route}) => {
             title="Skip for this"
             align="center"
             size={16}
-            onPress={() => navigation.replace('MainApp')}
+            onPress={uploadAndContinue}
           />
         </View>
       </View>

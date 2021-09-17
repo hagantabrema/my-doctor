@@ -30,6 +30,7 @@ const SignUp = ({navigation}) => {
           fullName: form.fullName,
           job: form.job,
           email: form.email,
+          uid: success.user.uid,
         };
 
         const db = getDatabase();
