@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Gap} from '../../components/atoms';
 import {
@@ -9,7 +9,13 @@ import {
 } from '../../components/molecules';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
-import {DummyDoctor1, DummyDoctor2, DummyDoctor3, JSONDoctorJob} from '../../assets';
+import {
+  DummyDoctor1,
+  DummyDoctor2,
+  DummyDoctor3,
+  JSONDoctorJob,
+} from '../../assets';
+import {getData} from '../../utils';
 
 const Doctor = ({navigation}) => {
   return (
