@@ -1,14 +1,31 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { DoctorList, Gap, Header, Profile } from '../../components';
-import { colors } from '../../utils';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import { ILNullPhoto } from '../../assets';
+import {DoctorList, Gap, Header, Profile} from '../../components';
+import {colors, getData} from '../../utils';
 
 const UserProfile = ({navigation}) => {
+  const [profile, setProfile] = useState({
+    fullName: '',
+    job: '',
+    photo: ILNullPhoto,
+  });
+
+  useEffect(() => {
+    getData('user').then(res => {
+      const data = res;
+      data.photo = {uri: res.photo}
+      setProfile(data);
+    })
+  })
+
   return (
     <View style={styles.page}>
-      <Header title="Profile" onPress={() => navigation.goBack()}/>
+      <Header title="Profile" onPress={() => navigation.goBack()} />
       <Gap height={10} />
-      <Profile name="Syahna Melinda" job="Product Designer"/>
+      {profile.fullName.length > 0 && (
+        <Profile name={profile.fullName} job={profile.job} photo={profile.photo}/>
+      )}
       <Gap height={14} />
       <DoctorList
         name="Edit Profile"
@@ -42,8 +59,8 @@ const UserProfile = ({navigation}) => {
 export default UserProfile;
 
 const styles = StyleSheet.create({
-    page: {
-        backgroundColor: colors.white,
-        flex: 1
-    },
+  page: {
+    backgroundColor: colors.white,
+    flex: 1,
+  },
 });
